@@ -1,13 +1,16 @@
 package com.example.datingapppractice
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
 import cardstackview.CardStackLayoutManager
 import cardstackview.CardStackListener
-import cardstackview.CardStackView
 import cardstackview.Direction
+import com.example.datingapppractice.auth.IntroActivity
 import com.example.datingapppractice.slding.CardStackAdapter
+import com.google.firebase.auth.FirebaseAuth
+import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity() {
 
@@ -19,7 +22,10 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        val cardStackView = findViewById<CardStackView>(R.id.card_stack_view)
+        main_logoutBtn.setOnClickListener{
+            FirebaseAuth.getInstance().signOut()
+            startActivity(Intent(this,IntroActivity::class.java))
+        }
 
         manager= CardStackLayoutManager(baseContext,object:CardStackListener{
             override fun onCardDragging(direction: Direction?, ratio: Float) {
@@ -45,7 +51,7 @@ class MainActivity : AppCompatActivity() {
         })
         val testList= listOf<String>("a","b","c","d")
         cardStackAdapter=CardStackAdapter(baseContext,testList)
-        cardStackView.layoutManager=manager
-        cardStackView.adapter=cardStackAdapter
+        card_stack_view.layoutManager=manager
+        card_stack_view.adapter=cardStackAdapter
     }
 }
