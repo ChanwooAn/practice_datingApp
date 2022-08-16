@@ -23,7 +23,7 @@
         <activity
             android:name=".auth.IntroActivity"
             android:exported="false"
-            android:launchMode="singleInstance"></activity>
+            ></activity>
         <activity
             android:name=".auth.JoinActivity"
             android:exported="false"></activity>
