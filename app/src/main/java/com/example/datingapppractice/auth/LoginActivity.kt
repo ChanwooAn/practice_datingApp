@@ -11,6 +11,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.example.datingapppractice.MainActivity
 import com.example.datingapppractice.R
+import com.example.datingapppractice.util.FirebaseUtil
 import com.google.android.material.textfield.TextInputEditText
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
@@ -18,10 +19,11 @@ import com.google.firebase.ktx.Firebase
 import kotlinx.android.synthetic.main.activity_login.*
 
 
-const private val TAG="LoginActivity"
+private const val TAG="LoginActivity"
+
 class LoginActivity : AppCompatActivity() {
 
-    lateinit private var auth:FirebaseAuth
+
     @SuppressLint("ClickableViewAccessibility")
     override fun onCreate(savedInstanceState: Bundle?) {
 
@@ -29,7 +31,6 @@ class LoginActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
 
-        auth= Firebase.auth
 
 
         login_pwSeeBtn.setOnTouchListener { _, motionEvent ->
@@ -45,7 +46,7 @@ class LoginActivity : AppCompatActivity() {
         }
 
 
-
+        val auth=FirebaseAuth.getInstance()
         login_loginBtn.setOnClickListener{
             auth.signInWithEmailAndPassword(login_id.text.toString(),login_pw.text.toString() )
                 .addOnCompleteListener(this) { task ->
