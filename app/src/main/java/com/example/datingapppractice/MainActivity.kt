@@ -60,11 +60,20 @@ class MainActivity : AppCompatActivity() {
 
         }
 
+        var swipeCount=0
         manager= CardStackLayoutManager(baseContext,object:CardStackListener{
             override fun onCardDragging(direction: Direction?, ratio: Float) {
             }
 
             override fun onCardSwiped(direction: Direction?) {
+
+                swipeCount++
+                if(swipeCount==cardStackAdapter.itemCount){
+                    userList= mutableListOf()
+                    getUserData()
+                    swipeCount=0
+
+                }
 
             }
             override fun onCardRewound() {
@@ -83,16 +92,18 @@ class MainActivity : AppCompatActivity() {
         })
 
         getUserData()
-
         cardStackAdapter=CardStackAdapter(baseContext,userList)
         card_stack_view.layoutManager=manager
         card_stack_view.adapter=cardStackAdapter
-        getUserData()
+
 
 
     }
     private fun getUserData() {
 
+/*
+          userList= mutableListOf()
+*/
 
           FirebaseUtil.userInfoRef.child(FirebaseUtil.getUid()).addValueEventListener(object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
@@ -132,7 +143,7 @@ class MainActivity : AppCompatActivity() {
                 Log.w(TAG, "Failed to read value.", error.toException())
             }
         })
-
+        Log.d(TAG,userList.size.toString())
     }
 
 
