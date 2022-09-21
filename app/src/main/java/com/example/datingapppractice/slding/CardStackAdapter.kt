@@ -1,5 +1,6 @@
 package com.example.datingapppractice.slding
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.util.Log
 import android.view.LayoutInflater
@@ -19,10 +20,11 @@ private const val TAG="CardStackAdapter"
 class CardStackAdapter(val context: Context, val items:List<User>): RecyclerView.Adapter<CardStackAdapter.ViewHolder>() {
     inner class ViewHolder(itemView:View):RecyclerView.ViewHolder(itemView){
 
+        @SuppressLint("SetTextI18n")
         fun binding(data:User){
-            itemView.card_name.text=data.nickName
-            itemView.card_age.text=data.age
-            itemView.card_locale.text=data.locale
+            itemView.card_name.text = "Name : ${data.nickName}"
+            itemView.card_age.text="Age: ${data.age}"
+            itemView.card_locale.text="locale: ${data.locale}"
 
             FirebaseUtil.storage.child("profileImage/${data.uid}.png").downloadUrl.addOnSuccessListener {
                 // Got the download URL for 'users/me/profile.png'
