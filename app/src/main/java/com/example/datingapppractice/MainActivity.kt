@@ -1,12 +1,19 @@
 package com.example.datingapppractice
 
 import android.annotation.SuppressLint
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.content.Context
 import android.content.Intent
+import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.widget.PopupMenu
+import android.widget.Toast
+import androidx.core.app.NotificationCompat
+import androidx.core.app.NotificationManagerCompat
 import cardstackview.CardStackLayoutManager
 import cardstackview.CardStackListener
 import cardstackview.Direction
@@ -45,8 +52,12 @@ class MainActivity : AppCompatActivity() {
                         startActivity(Intent(this,MyPageActivity::class.java))
                         true
                     }
+                    R.id.mainPopup_menu2->{
+                        startActivity(Intent(this,LikesActivity::class.java))
+                        true
+                    }
 
-                    R.id.mainPopup_menu2-> {
+                    R.id.mainPopup_menu3-> {
                         FirebaseAuth.getInstance().signOut()
                         startActivity(Intent(this,IntroActivity::class.java))
                         true
@@ -66,6 +77,10 @@ class MainActivity : AppCompatActivity() {
             }
 
             override fun onCardSwiped(direction: Direction?) {
+
+                if(direction==Direction.Left){
+                    like(FirebaseUtil.getUid(),userList[swipeCount].uid)
+                }
 
                 swipeCount++
                 if(swipeCount==cardStackAdapter.itemCount){
@@ -144,6 +159,63 @@ class MainActivity : AppCompatActivity() {
             }
         })
         Log.d(TAG,userList.size.toString())
+    }
+
+    fun like(myUid:String,otherUid:String){
+
+        FirebaseUtil.userInfoRef.child(myUid).child("Like").child(otherUid).setValue(true)
+
+        val postListener=object :ValueEventListener{
+            override fun onDataChange(snapshot: DataSnapshot) {
+                for(datamodel in snapshot.children){
+                    if(datamodel.key==myUid){
+                        Toast.makeText(baseContext,"매칭 완료",Toast.LENGTH_SHORT).show()
+                    }
+                    createNotificationChannel()
+                    sendNotification()
+
+                }
+
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+
+            }
+        }
+
+
+        val otherLike=FirebaseUtil.userInfoRef.child(otherUid).child("Like").addValueEventListener(postListener)
+
+    }
+
+    private fun createNotificationChannel() {
+        // Create the NotificationChannel, but only on API 26+ because
+        // the NotificationChannel class is new and not in the support library
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val name = "Dating"
+            val descriptionText = "matching complete"
+            val importance = NotificationManager.IMPORTANCE_DEFAULT
+            val channel = NotificationChannel("Dating_Channel", name, importance).apply {
+                description = descriptionText
+            }
+            // Register the channel with the system
+            val notificationManager: NotificationManager =
+                getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+            notificationManager.createNotificationChannel(channel)
+        }
+    }
+    private fun sendNotification(){
+        var builder = NotificationCompat.Builder(this, "Dating_Channel")
+            .setSmallIcon(R.drawable.auth_image)
+            .setContentTitle("Matching")
+            .setContentText("Successs")
+            .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+
+
+        with(NotificationManagerCompat.from(this)) {
+            // notificationId is a unique int for each notification that you must define
+            notify(1, builder.build())
+        }
     }
 
 

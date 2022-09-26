@@ -5,6 +5,10 @@
         android:title="My Page"/>
     <item
         android:id="@+id/mainPopup_menu2"
+        android:title="Likes"
+        />
+    <item
+        android:id="@+id/mainPopup_menu3"
         android:title="logout"
         />
 </menu>
